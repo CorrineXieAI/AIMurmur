@@ -1,13 +1,13 @@
 :root {
-    --primary-color: #7C9CBF;
-    --secondary-color: #9BBACF;
-    --background-color: #F5F7FA;
-    --text-color: #4A4A4A;
-    --shadow-color: rgba(0, 0, 0, 0.08);
-    --accent-color: #FFB6C1;
+    --primary-color: #0ABAB5;  /* Tiffany Blue */
+    --secondary-color: #7FD1D0;  /* Light Tiffany Blue */
+    --background-color: #F0F9F9;  /* Very Light Tiffany Blue */
+    --text-color: #2C3E50;  /* Dark Blue-Gray */
+    --shadow-color: rgba(10, 186, 181, 0.1);
+    --accent-color: #FFB6C1;  /* Keeping pink accent */
     --success-color: #98D8AA;
     --user-message-bg: #E3F2FD;
-    --ai-message-bg: #F8F9FA;
+    --ai-message-bg: #F0F9F9;
 }
 
 * {
@@ -47,6 +47,24 @@ h1 {
     text-align: center;
     margin-bottom: 30px;
     color: var(--primary-color);
+}
+
+h1 .fas {
+    color: var(--primary-color);
+    margin-right: 8px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
 }
 
 h2 {
