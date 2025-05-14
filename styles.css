@@ -1,0 +1,366 @@
+:root {
+    --primary-color: #7C9CBF;
+    --secondary-color: #9BBACF;
+    --background-color: #F5F7FA;
+    --text-color: #4A4A4A;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --accent-color: #FFB6C1;
+    --success-color: #98D8AA;
+    --user-message-bg: #E3F2FD;
+    --ai-message-bg: #F8F9FA;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 390px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    background: white;
+    box-shadow: 0 0 20px var(--shadow-color);
+    border-radius: 24px;
+}
+
+.section {
+    display: none;
+    padding: 20px;
+}
+
+.section.active {
+    display: block;
+}
+
+h1 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+}
+
+h2 {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input[type="text"] {
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-primary, .btn-option, .btn-control {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(124, 156, 191, 0.2);
+}
+
+.btn-option {
+    background-color: white;
+    color: var(--text-color);
+    border: 2px solid #E8E8E8;
+    height: 100px;
+    flex-direction: column;
+    border-radius: 20px;
+}
+
+.btn-option:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.btn-control {
+    background-color: #f5f5f5;
+    color: var(--text-color);
+}
+
+.icon {
+    font-size: 20px;
+}
+
+.fas {
+    font-size: 20px;
+}
+
+.btn-option .fas {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-title {
+    font-size: 20px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #E8E8E8;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 20px auto;
+    padding: 24px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 350px;
+    min-height: 400px;
+    box-shadow: 0 4px 20px var(--shadow-color);
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease;
+}
+
+#educationContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    margin-bottom: 20px;
+    max-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+}
+
+.close-btn {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    z-index: 1001;
+}
+
+.ai-response {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+}
+
+.ai-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(124, 156, 191, 0.2);
+    flex-shrink: 0;
+}
+
+.message-content {
+    background-color: var(--ai-message-bg);
+    padding: 16px;
+    border-radius: 16px;
+    flex: 1;
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.user-response {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+    flex-direction: row-reverse;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+    flex-shrink: 0;
+}
+
+.user-message {
+    background-color: var(--user-message-bg);
+    padding: 16px;
+    border-radius: 16px;
+    flex: 1;
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    background: var(--background-color);
+    border-radius: 16px;
+    position: sticky;
+    bottom: 0;
+    margin-top: auto;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #E8E8E8;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.input-area input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.voice-input-btn {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.voice-input-btn:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.voice-input-btn.recording {
+    background-color: #ff4444;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.modal-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #E8E8E8;
+}
+
+/* 滾動條樣式 */
+#educationContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+#educationContent::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#educationContent::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+#educationContent::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+/* 響應式設計 */
+@media (max-width: 390px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .button-grid {
+        gap: 10px;
+    }
+    
+    .btn-option {
+        height: 90px;
+    }
+} 
