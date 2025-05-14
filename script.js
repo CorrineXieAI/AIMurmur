@@ -375,10 +375,17 @@ function processUserInput(input) {
 
     // 根據當前語言選擇回應
     let response = '';
-    for (let key in multilingualResponses) {
-        if (input.toLowerCase().includes(key)) {
-            response = multilingualResponses[key][currentLanguage];
-            break;
+    // 新增自訂範本回覆（優先）
+    if (input.includes('麻醉')) {
+        response = '你此次麻醉採全身麻醉。';
+    } else if (input.includes('手術')) {
+        response = '你此次手術的方式為胸腔鏡微創手術。';
+    } else {
+        for (let key in multilingualResponses) {
+            if (input.toLowerCase().includes(key)) {
+                response = multilingualResponses[key][currentLanguage];
+                break;
+            }
         }
     }
 
