@@ -4,6 +4,33 @@ let conversationHistory = []; // 改為單一陣列，所有衛教項目共用
 // 當前選擇的衛教項目
 let currentEducationType = null;
 
+// 當前語言設定
+let currentLanguage = 'zh';
+
+// 多語言回應內容
+const multilingualResponses = {
+    surgery: {
+        zh: '手術是一個嚴謹的醫療程序，我們會確保您的安全。您想了解手術的哪些具體方面？例如：手術時間、恢復期、注意事項等。',
+        en: 'Surgery is a rigorous medical procedure, and we will ensure your safety. What specific aspects of the surgery would you like to know about? For example: surgery duration, recovery period, precautions, etc.',
+        tw: '手術是一個真嚴謹的醫療程序，阮會確保您的安全。您想欲了解手術的啥物具體方面？親像：手術時間、恢復期、注意事項等等。'
+    },
+    anesthesia: {
+        zh: '麻醉是手術的重要環節，我們會根據您的情況選擇最適合的麻醉方式。您對麻醉有什麼特別的疑慮嗎？例如：麻醉風險、術後恢復等。',
+        en: 'Anesthesia is a crucial part of the surgery. We will choose the most suitable anesthesia method based on your condition. Do you have any specific concerns about anesthesia? For example: anesthesia risks, post-operative recovery, etc.',
+        tw: '麻醉是手術的重要環節，阮會根據您的情況選擇上適合的麻醉方式。您對麻醉有啥物特別的疑慮？親像：麻醉風險、術後恢復等等。'
+    },
+    risk: {
+        zh: '每個手術都有其特定的風險，我們會詳細為您說明。您想了解哪些具體的風險？例如：出血、感染、併發症等。',
+        en: 'Each surgery has its specific risks, which we will explain in detail. What specific risks would you like to know about? For example: bleeding, infection, complications, etc.',
+        tw: '逐個手術攏有伊特定的風險，阮會詳細為您說明。您想欲了解啥物具體的風險？親像：出血、感染、併發症等等。'
+    },
+    cost: {
+        zh: '費用會根據手術類型和使用的材料而有所不同。您想了解具體的費用明細嗎？我們可以為您詳細說明健保給付和自費項目。',
+        en: 'The cost varies depending on the type of surgery and materials used. Would you like to know the specific cost details? We can explain the NHI coverage and self-pay items in detail.',
+        tw: '費用會根據手術類型和使用的材料而有所不同。您想欲了解具體的費用明細？阮會為您詳細說明健保給付和自費項目。'
+    }
+};
+
 // 身分證驗證函數
 function verifyIdentity() {
     const idNumber = document.getElementById('idNumber').value;
@@ -156,33 +183,24 @@ function closeModal() {
 let isSpeaking = false;
 
 function toggleVoice() {
-    const text = document.getElementById('educationText')?.textContent;
+    const educationContent = document.getElementById('educationContent');
+    if (!educationContent) return;
+
+    // 獲取最後一條AI回應
+    const lastAiResponse = educationContent.querySelector('.ai-response:last-child');
+    if (!lastAiResponse) return;
+
+    const text = lastAiResponse.querySelector('.message-content p')?.textContent;
     if (!text) return;
-    
+
     if (isSpeaking) {
         window.speechSynthesis.cancel();
         isSpeaking = false;
     } else {
-        speakText(text);
-    }
-}
-
-function speakText(text) {
-    if (window.speechSynthesis) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'zh-TW';
-        utterance.rate = 1;
-        utterance.pitch = 1;
-        
-        utterance.onstart = () => {
-            isSpeaking = true;
-        };
-        
-        utterance.onend = () => {
-            isSpeaking = false;
-        };
-        
-        window.speechSynthesis.speak(utterance);
+        // 只在中文或英文模式下播放語音
+        if (currentLanguage === 'zh' || currentLanguage === 'en') {
+            speakText(text);
+        }
     }
 }
 
@@ -195,11 +213,10 @@ function initSpeechRecognition() {
         recognition = new webkitSpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
-        recognition.lang = 'zh-TW';
+        recognition.lang = currentLanguage === 'en' ? 'en-US' : 'zh-TW';
 
         recognition.onresult = function(event) {
             const text = event.results[0][0].transcript;
-            // 直接處理語音識別結果，不顯示在輸入框中
             processUserInput(text);
         };
 
@@ -209,7 +226,6 @@ function initSpeechRecognition() {
             if (voiceInputBtn) {
                 voiceInputBtn.classList.remove('recording');
             }
-            // 清空輸入框
             const userInput = document.getElementById('userInput');
             if (userInput) {
                 userInput.value = '';
@@ -217,14 +233,15 @@ function initSpeechRecognition() {
         };
 
         recognition.onerror = function(event) {
-            console.error('語音識別錯誤:', event.error);
+            console.error('Speech recognition error:', event.error);
             isRecording = false;
             const voiceInputBtn = document.getElementById('voiceInputBtn');
             if (voiceInputBtn) {
                 voiceInputBtn.classList.remove('recording');
             }
-            // 顯示錯誤提示
-            const errorMessage = '語音識別出現問題，請重試或使用文字輸入。';
+            const errorMessage = currentLanguage === 'en' 
+                ? 'Speech recognition error. Please try again or use text input.'
+                : '語音識別出現問題，請重試或使用文字輸入。';
             processUserInput(errorMessage);
         };
     }
@@ -257,43 +274,97 @@ function toggleVoiceInput() {
     }
 }
 
-// 處理用戶輸入
-function processUserInput(input) {
-    if (!currentEducationType) return;
-
-    // 如果是錯誤消息，直接顯示AI回應
-    if (input.includes('語音識別出現問題')) {
-        const aiResponse = document.createElement('div');
-        aiResponse.className = 'ai-response';
-        aiResponse.innerHTML = `
-            <div class="ai-avatar">
-                <i class="fas fa-robot"></i>
-            </div>
-            <div class="message-content">
-                <p>${input}</p>
-            </div>
-        `;
-        
-        const educationContent = document.getElementById('educationContent');
-        const inputArea = educationContent?.querySelector('.input-area');
-        if (educationContent && inputArea) {
-            educationContent.insertBefore(aiResponse, inputArea);
+// 切換語言
+function changeLanguage(lang) {
+    currentLanguage = lang;
+    
+    // 更新按鈕狀態
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick').includes(lang)) {
+            btn.classList.add('active');
         }
-        
-        // 保存到歷史記錄
-        conversationHistory.push({
-            type: 'ai',
-            content: input,
-            educationType: currentEducationType
-        });
+    });
+    
+    // 更新語音識別語言
+    if (recognition) {
+        recognition.lang = lang === 'en' ? 'en-US' : 'zh-TW';
+    }
+    
+    // 停止當前播放的語音
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    
+    // 重新顯示當前對話
+    if (currentEducationType) {
+        showEducation(currentEducationType);
+    }
+}
+
+// 修改語音合成函數
+function speakText(text) {
+    if (!window.speechSynthesis) {
+        console.log('Speech synthesis not supported');
         return;
     }
+
+    // 停止當前正在播放的語音
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // 根據當前語言設置語音參數
+    if (currentLanguage === 'en') {
+        utterance.lang = 'en-US';
+        // 嘗試使用英文語音
+        const voices = window.speechSynthesis.getVoices();
+        const englishVoice = voices.find(voice => voice.lang === 'en-US');
+        if (englishVoice) {
+            utterance.voice = englishVoice;
+        }
+    } else {
+        utterance.lang = 'zh-TW';
+        // 嘗試使用中文語音
+        const voices = window.speechSynthesis.getVoices();
+        const chineseVoice = voices.find(voice => voice.lang === 'zh-TW');
+        if (chineseVoice) {
+            utterance.voice = chineseVoice;
+        }
+    }
+
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    
+    utterance.onstart = () => {
+        isSpeaking = true;
+        console.log('Speech started');
+    };
+    
+    utterance.onend = () => {
+        isSpeaking = false;
+        console.log('Speech ended');
+    };
+
+    utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event);
+        isSpeaking = false;
+    };
+    
+    window.speechSynthesis.speak(utterance);
+}
+
+// 修改處理用戶輸入函數
+function processUserInput(input) {
+    if (!currentEducationType) return;
 
     // 保存用戶輸入到歷史記錄
     conversationHistory.push({
         type: 'user',
         content: input,
-        educationType: currentEducationType
+        educationType: currentEducationType,
+        language: currentLanguage
     });
 
     // 顯示用戶輸入
@@ -314,32 +385,29 @@ function processUserInput(input) {
         educationContent.insertBefore(userResponse, inputArea);
     }
 
-    // 這裡可以添加更複雜的AI對話邏輯
-    const responses = {
-        '手術': '手術是一個嚴謹的醫療程序，我們會確保您的安全。您想了解手術的哪些具體方面？例如：手術時間、恢復期、注意事項等。',
-        '麻醉': '麻醉是手術的重要環節，我們會根據您的情況選擇最適合的麻醉方式。您對麻醉有什麼特別的疑慮嗎？例如：麻醉風險、術後恢復等。',
-        '風險': '每個手術都有其特定的風險，我們會詳細為您說明。您想了解哪些具體的風險？例如：出血、感染、併發症等。',
-        '費用': '費用會根據手術類型和使用的材料而有所不同。您想了解具體的費用明細嗎？我們可以為您詳細說明健保給付和自費項目。',
-        '恢復': '手術後的恢復期很重要，我們會提供完整的術後照護指導。您想了解哪些具體的恢復注意事項？',
-        '時間': '手術時間會根據手術類型和複雜度而有所不同。您想了解具體的手術時間安排嗎？',
-        '準備': '手術前的準備工作很重要，包括禁食、停藥等事項。您需要了解具體的準備事項嗎？',
-        '併發症': '每個手術都可能出現併發症，我們會詳細說明可能的併發症和預防措施。您想了解哪些具體的併發症？'
-    };
-
-    let response = '抱歉，我沒有完全理解您的問題。請您換個方式提問，或直接詢問醫護人員。您也可以詢問關於手術、麻醉、風險、費用、恢復期等具體問題。';
-    
-    for (let key in responses) {
-        if (input.includes(key)) {
-            response = responses[key];
+    // 根據當前語言選擇回應
+    let response = '';
+    for (let key in multilingualResponses) {
+        if (input.toLowerCase().includes(key)) {
+            response = multilingualResponses[key][currentLanguage];
             break;
         }
+    }
+
+    if (!response) {
+        response = currentLanguage === 'en' 
+            ? "I'm sorry, I didn't fully understand your question. Please try asking in a different way or consult with medical staff. You can ask about surgery, anesthesia, risks, costs, recovery period, etc."
+            : currentLanguage === 'tw'
+            ? "歹勢，阮無完全了解您的問題。請您換一個方式問，抑是直接問醫護人員。您會當問手術、麻醉、風險、費用、恢復期等等。"
+            : "抱歉，我沒有完全理解您的問題。請您換個方式提問，或直接詢問醫護人員。您也可以詢問關於手術、麻醉、風險、費用、恢復期等具體問題。";
     }
 
     // 保存AI回應到歷史記錄
     conversationHistory.push({
         type: 'ai',
         content: response,
-        educationType: currentEducationType
+        educationType: currentEducationType,
+        language: currentLanguage
     });
 
     // 更新AI回應

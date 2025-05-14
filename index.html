@@ -54,6 +54,20 @@
                     <!-- 內容將由 JavaScript 動態生成 -->
                 </div>
                 <div class="modal-controls">
+                    <div class="language-controls">
+                        <button type="button" onclick="changeLanguage('zh')" class="btn-control lang-btn active">
+                            <i class="fas fa-language"></i>
+                            中文
+                        </button>
+                        <button type="button" onclick="changeLanguage('en')" class="btn-control lang-btn">
+                            <i class="fas fa-language"></i>
+                            English
+                        </button>
+                        <button type="button" onclick="changeLanguage('tw')" class="btn-control lang-btn">
+                            <i class="fas fa-language"></i>
+                            台語
+                        </button>
+                    </div>
                     <button type="button" onclick="toggleVoice()" class="btn-control">
                         <i class="fas fa-volume-up"></i>
                         語音播放
