@@ -129,17 +129,6 @@ function showEducation(type) {
         educationContentDiv.appendChild(messageDiv);
     });
     
-    // 添加輸入區域
-    const inputArea = document.createElement('div');
-    inputArea.className = 'input-area';
-    inputArea.innerHTML = `
-        <input type="text" id="userInput" placeholder="請輸入您的問題...">
-        <button type="button" onclick="toggleVoiceInput()" class="voice-input-btn" id="voiceInputBtn">
-            <i class="fas fa-microphone"></i>
-        </button>
-    `;
-    educationContentDiv.appendChild(inputArea);
-    
     // 顯示對話框
     modal.style.display = 'block';
     console.log('Modal display set to block');
@@ -380,9 +369,8 @@ function processUserInput(input) {
     `;
     
     const educationContent = document.getElementById('educationContent');
-    const inputArea = educationContent?.querySelector('.input-area');
-    if (educationContent && inputArea) {
-        educationContent.insertBefore(userResponse, inputArea);
+    if (educationContent) {
+        educationContent.appendChild(userResponse);
     }
 
     // 根據當前語言選擇回應
@@ -422,8 +410,8 @@ function processUserInput(input) {
         </div>
     `;
     
-    if (educationContent && inputArea) {
-        educationContent.insertBefore(aiResponse, inputArea);
+    if (educationContent) {
+        educationContent.appendChild(aiResponse);
     }
 
     // 自動播放回應
