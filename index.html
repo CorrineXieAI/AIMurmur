@@ -13,11 +13,17 @@
         <div id="loginSection" class="section active">
             <h1><i class="fas fa-robot"></i> 手術AI助理</h1>
             <div class="login-form">
-                <input type="text" id="idNumber" placeholder="請輸入身分證字號" maxlength="10">
+                <input type="text" id="username" placeholder="請輸入帳號" maxlength="20">
+                <input type="password" id="password" placeholder="請輸入密碼" maxlength="20">
                 <button onclick="verifyIdentity()" class="btn-primary">
                     <i class="fas fa-sign-in-alt"></i>
                     登入
                 </button>
+                <div class="warning-message">
+                    <p><i class="fas fa-exclamation-triangle"></i> 注意事項：</p>
+                    <p>本系統為AI輔助工具，僅供參考使用。所有醫療決策仍需由專業醫療人員評估。</p>
+                    <p>請勿將此系統作為唯一醫療建議來源。</p>
+                </div>
             </div>
         </div>
 

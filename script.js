@@ -33,19 +33,16 @@ const multilingualResponses = {
 
 // 身分證驗證函數
 function verifyIdentity() {
-    const idNumber = document.getElementById('idNumber').value;
-    
-    // 簡單的身分證字號驗證（實際應用中應該使用更嚴格的驗證）
-    const idPattern = /^[A-Z][12]\d{8}$/;
-    
-    if (!idPattern.test(idNumber)) {
-        alert('請輸入有效的身分證字號');
-        return;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // 預設帳號密碼驗證
+    if (username === '1234567890' && password === '1234567890') {
+        document.getElementById('loginSection').classList.remove('active');
+        document.getElementById('mainSection').classList.add('active');
+    } else {
+        alert('帳號或密碼錯誤，請重新輸入！');
     }
-    
-    // 切換到主要功能區域
-    document.getElementById('loginSection').classList.remove('active');
-    document.getElementById('mainSection').classList.add('active');
 }
 
 // 衛教內容資料
