@@ -373,10 +373,10 @@ function processUserInput(input) {
     // 根據當前語言選擇回應
     let response = '';
     // 新增自訂範本回覆（優先）
-    if (input.includes('麻醉')) {
-        response = '你此次麻醉採全身麻醉。';
-    } else if (input.includes('手術')) {
-        response = '你此次手術的方式為胸腔鏡微創手術。';
+    if (input.includes('麻醉方式') || input.includes('麻醉是採') || input.includes('麻醉是')) {
+        response = '您此次手術採用全身麻醉方式。';
+    } else if (input.includes('手術名稱') || input.includes('手術是什麼') || input.includes('手術方式')) {
+        response = '您此次手術的方式為胸腔鏡微創手術。';
     } else {
         for (let key in multilingualResponses) {
             if (input.toLowerCase().includes(key)) {
